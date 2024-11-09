@@ -9,7 +9,7 @@
 ## Files support
 
 - Text files: all models
-- PDF: natively supported in Claude 3 Sonnet, in other models we extract the text and inject as text prompy
+- PDF: natively supported in Claude 3 Sonnet and Gemini, in other models we extract the text and inject as text prompy
 - Audio: natively in Gemini and GPT-4o Audio
 - Images: GPT-4o family, Gemini, Claude, Groq Lllama 3.2
 
