@@ -3,7 +3,7 @@
 ## Features
 
 - Completely works offline (except for LLMs that require external API)
-- OpenAI, Anthropic, Google AI, Groq
+- OpenAI, Anthropic, Google AI, Groq, Ollama
 - Multi-modal
 
 ## Files support
