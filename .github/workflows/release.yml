@@ -28,6 +28,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
+          path: main
+    
+      - uses: actions/checkout@v4
+        with:
           repository: egoist/chatkit
           ref: ${{ github.event.client_payload.sha }}
           token: ${{ secrets.GH_TOKEN_FOR_CHECKOUT }}
