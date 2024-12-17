@@ -26,11 +26,13 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out this
+        uses: actions/checkout@v4
         with:
           path: main
     
-      - uses: actions/checkout@v4
+      - name: Check out project
+        uses: actions/checkout@v4
         with:
           repository: egoist/chatkit
           ref: ${{ github.event.client_payload.sha }}
