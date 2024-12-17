@@ -30,7 +30,7 @@ jobs:
         with:
           repository: egoist/chatkit
           ref: ${{ github.event.client_payload.sha }}
-          # token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN_FOR_CHECKOUT }}
 
       - uses: pnpm/action-setup@v4
 
