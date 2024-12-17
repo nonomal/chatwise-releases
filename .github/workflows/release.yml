@@ -26,18 +26,18 @@ jobs:
 
     runs-on: ${{ matrix.platform }}
     steps:
-      - name: Check out this
-        uses: actions/checkout@v4
-        with:
-          path: main
-    
       - name: Check out project
         uses: actions/checkout@v4
         with:
           repository: egoist/chatkit
-          ref: ${{ github.event.client_payload.sha }}
           token: ${{ secrets.GH_TOKEN_FOR_CHECKOUT }}
-          path: project
+          # just in case
+          fetch-depth: 5
+
+      - name: checkout commit
+        run: git checkout $SHA
+        env: 
+          SHA: ${{ github.event.client_payload.sha }}
 
       - uses: pnpm/action-setup@v4
 
@@ -66,7 +66,6 @@ jobs:
       - name: install frontend dependencies
         # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
         run: pnpm install # change this to npm or pnpm depending on which one you use.
-        working-directory: ./project
 
 
       - uses: tauri-apps/tauri-action@v0.5.16
@@ -84,7 +83,7 @@ jobs:
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
           IS_INTEL_MAC: ${{ contains(matrix.args, 'x86_64') }}
         with:
-          projectPath: ./project/desktop
+          projectPath: ./desktop
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
           releaseName: "v__VERSION__"
           releaseBody: "See the assets to download this version and install."
