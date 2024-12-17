@@ -3,18 +3,19 @@
 ## Features
 
 - Completely works offline (except for LLMs that require external API)
-- OpenAI, Anthropic, Google AI, Groq, Ollama
+- OpenAI, Anthropic, Google AI, Groq, Ollama etc
 - Multi-modal
+- Text-to-speech powered by OpenAI and ElevenLabs
 
 ## Files support
 
 - Text files: all models
 - PDF: natively supported in Claude 3.5 Sonnet and Gemini, in other models we extract the text and inject as text prompt
 - Audio: natively in Gemini and GPT-4o Audio
-- Images: GPT-4o family, Gemini, Claude, Groq Lllama 3.2
+- Images: GPT-4o family, Gemini, Claude, Groq Lllama
 
 ## Downloads
 
-For macOS (Apple Silicon) only, Windows coming soon.
+For macOS (Apple Silicon & Intel) only, Windows coming soon.
 
 [Releases](https://github.com/egoist/chatwise-releases/releases)
