@@ -1,0 +1,87 @@
+name: "release"
+
+on:
+  repository_dispatch:
+    types: [on-demand-release]
+
+jobs:
+  publish-tauri:
+    permissions:
+      contents: write
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # - target: [self-hosted, macOS]
+          #   args: "--target aarch64-apple-darwin"
+          #   is_macos: true
+          - platform: macos-latest
+            args: "--target aarch64-apple-darwin"
+            is_macos: true
+          - platform: macos-latest
+            args: "--target x86_64-apple-darwin"
+            is_macos: true
+          # - platform: "windows-latest"
+          #   args: ""
+
+    runs-on: ${{ matrix.platform }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          repository: egoist/chatkit
+          ref: ${{ github.event.client_payload.sha }}
+          # token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: pnpm/action-setup@v4
+
+      - name: setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: "pnpm" # Set this to npm, yarn or pnpm.
+
+      - name: setup go
+        uses: actions/setup-go@v5
+        with:
+          go-version: "stable"
+
+      - name: install Rust stable
+        uses: dtolnay/rust-toolchain@stable # Set this to dtolnay/rust-toolchain@nightly
+        with:
+          # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
+          targets: ${{ matrix.is_macos && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+
+      - name: Rust cache
+        uses: swatinem/rust-cache@v2
+        with:
+          workspaces: "./src-tauri -> target"
+
+      - name: install frontend dependencies
+        # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
+        run: pnpm install # change this to npm or pnpm depending on which one you use.
+
+      - uses: tauri-apps/tauri-action@v0.5.16
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          APPLE_CERTIFICATE: ${{secrets.APPLE_CERTIFICATE}}
+          APPLE_CERTIFICATE_PASSWORD: ${{secrets.APPLE_CERTIFICATE_PASSWORD}}
+          APPLE_ID: ${{secrets.APPLE_ID}}
+          APPLE_PASSWORD: ${{secrets.APPLE_PASSWORD}}
+          APPLE_TEAM_ID: ${{secrets.APPLE_TEAM_ID}}
+          TAURI_SIGNING_PRIVATE_KEY: ${{secrets.TAURI_SIGNING_PRIVATE_KEY}}
+          TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD}}
+          SENTRY_AUTH_TOKEN: ${{secrets.SENTRY_AUTH_TOKEN}}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secret.SENTRY_PROJECT }}
+          IS_INTEL_MAC: ${{ contains(matrix.args, 'x86_64') }}
+        with:
+          projectPath: ./desktop
+          tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
+          releaseName: "v__VERSION__"
+          releaseBody: "See the assets to download this version and install."
+          releaseDraft: true
+          prerelease: false
+          args: ${{ matrix.args }}
+          repo: chatwise-releases
+          owner: egoist
+          releaseCommitish: main
