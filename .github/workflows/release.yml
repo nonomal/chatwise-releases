@@ -12,18 +12,15 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # - target: [self-hosted, macOS]
-          #   args: "--target aarch64-apple-darwin"
-          #   is_macos: true
           - platform: macos-latest
             args: "--target aarch64-apple-darwin"
-            is_macos: true
+            name: macOS arm64
           - platform: macos-latest
             args: "--target x86_64-apple-darwin"
-            is_macos: true
+            name: macOS Intel
           # - platform: "windows-latest"
           #   args: ""
-
+    name: ${{ matrix.name }}
     runs-on: ${{ matrix.platform }}
     steps:
       - name: Check out project
@@ -50,7 +47,7 @@ jobs:
         uses: dtolnay/rust-toolchain@stable # Set this to dtolnay/rust-toolchain@nightly
         with:
           # Those targets are only used on macos runners so it's in an `if` to slightly speed up windows and linux builds.
-          targets: ${{ matrix.is_macos && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
+          targets: ${{ contains(matrix.platform, 'macos') && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
