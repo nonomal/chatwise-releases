@@ -16,6 +16,6 @@
 
 ## Downloads
 
-For macOS (Apple Silicon & Intel) only, Windows coming soon.
+For macOS and Windows.
 
 [Releases](https://github.com/egoist/chatwise-releases/releases)
