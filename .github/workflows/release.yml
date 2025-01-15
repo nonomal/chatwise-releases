@@ -55,7 +55,7 @@ jobs:
         run: pnpm install # change this to npm or pnpm depending on which one you use.
 
 
-      - uses: tauri-apps/tauri-action@v0.5.18
+      - uses: tauri-apps/tauri-action@v0.5.16
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APPLE_CERTIFICATE: ${{secrets.APPLE_CERTIFICATE}}
