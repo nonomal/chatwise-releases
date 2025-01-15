@@ -55,7 +55,7 @@ jobs:
         run: pnpm install # change this to npm or pnpm depending on which one you use.
 
 
-      - uses: tauri-apps/tauri-action@v0.5.16
+      - uses: tauri-apps/tauri-action@v0.5.18
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           APPLE_CERTIFICATE: ${{secrets.APPLE_CERTIFICATE}}
@@ -70,6 +70,7 @@ jobs:
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
           IS_INTEL_MAC: ${{ contains(matrix.args, 'x86_64') }}
           MY_NAME: ${{ secrets.MY_NAME }}
+          REDACT_2: ${{ secrets.REDACT_2 }}
         with:
           projectPath: ./desktop
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
