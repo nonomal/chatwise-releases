@@ -77,6 +77,7 @@ jobs:
           MY_NAME: ${{ secrets.MY_NAME }}
           REDACT_2: ${{ secrets.REDACT_2 }}
           CI: false
+          NODE_OPTIONS: "--max_old_space_size=4096"
         with:
           projectPath: ./desktop
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
