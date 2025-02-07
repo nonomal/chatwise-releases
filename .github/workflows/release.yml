@@ -76,6 +76,7 @@ jobs:
           IS_INTEL_MAC: ${{ contains(matrix.args, 'x86_64') }}
           MY_NAME: ${{ secrets.MY_NAME }}
           REDACT_2: ${{ secrets.REDACT_2 }}
+          CI: false
         with:
           projectPath: ./desktop
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
