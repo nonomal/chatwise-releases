@@ -16,6 +16,6 @@
 
 ## Downloads
 
-For macOS and Windows.
+For macOS and Windows. Mobile app soon(ish)
 
 [Releases](https://github.com/egoist/chatwise-releases/releases)
