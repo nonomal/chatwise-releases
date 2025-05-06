@@ -18,4 +18,4 @@
 
 For macOS and Windows. Mobile app soon(ish)
 
-[Releases](https://github.com/egoist/chatwise-releases/releases)
+[Releases](https://github.com/egoist/chatwise-releases/releases) | [Feedback](https://github.com/egoist/chatwise-releases/issues/new)
