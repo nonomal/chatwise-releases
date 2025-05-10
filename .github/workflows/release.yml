@@ -55,13 +55,8 @@ jobs:
 
       - name: Install posthog-cli
         run: |
-          curl --proto '=https' --tlsv1.2 -LsSf https://github.com/PostHog/posthog/releases/download/posthog-cli-v0.0.5/posthog-cli-installer.sh | sh
-          source $HOME/.posthog/env
-          posthog-cli-update
-          posthog-cli login
-        env:
-          POSTHOG_CLI_ENV_ID: ${{ secrets.POSTHOG_CLI_ENV_ID }}
-          POSTHOG_CLI_TOKEN: ${{ secrets.POSTHOG_CLI_TOKEN }}
+          bun ./ensure-posthog.ts
+   
 
       - name: install frontend dependencies
         # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
@@ -88,6 +83,8 @@ jobs:
           REDACT_2: ${{ secrets.REDACT_2 }}
           CI: false
           NODE_OPTIONS: "--max_old_space_size=4096"
+          POSTHOG_CLI_ENV_ID: ${{ secrets.POSTHOG_CLI_ENV_ID }}
+          POSTHOG_CLI_TOKEN: ${{ secrets.POSTHOG_CLI_TOKEN }}
         with:
           projectPath: ./desktop
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
