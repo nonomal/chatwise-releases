@@ -53,6 +53,15 @@ jobs:
         with:
           workspaces: ". -> target"
 
+      - name: Install posthog-cli
+        run: |
+          curl --proto '=https' --tlsv1.2 -LsSf https://github.com/PostHog/posthog/releases/download/posthog-cli-v0.0.5/posthog-cli-installer.sh | sh
+          posthog-cli-update
+          posthog-cli login
+        env:
+          POSTHOG_CLI_ENV_ID: ${{ secrets.POSTHOG_CLI_ENV_ID }}
+          POSTHOG_CLI_TOKEN: ${{ secrets.POSTHOG_CLI_TOKEN }}
+
       - name: install frontend dependencies
         # If you don't have `beforeBuildCommand` configured you may want to build your frontend here too.
         run: pnpm install # change this to npm or pnpm depending on which one you use.
