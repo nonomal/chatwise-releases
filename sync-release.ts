@@ -32,9 +32,9 @@ const s3Client = new Bun.S3Client({
   secretAccessKey: config.awsSecretAccessKey,
 });
 
-async function fetchLatestRelease(): Promise<GitHubRelease> {
+async function fetchReleases(): Promise<GitHubRelease[]> {
   const response = await fetch(
-    `https://api.github.com/repos/${config.githubRepo}/releases/latest`,
+    `https://api.github.com/repos/${config.githubRepo}/releases`,
     {
       headers: {
         Authorization: `Bearer ${config.githubToken}`,
@@ -82,35 +82,42 @@ async function uploadToS3(
 async function syncReleaseAssets(): Promise<void> {
   try {
     console.log("Fetching latest release...");
-    const release = await fetchLatestRelease();
+    const releases = await fetchReleases();
+    const release = releases[0]!;
 
     console.log(
       `Found release: ${release.tag_name} with ${release.assets.length} assets`
     );
 
-    for (const asset of release.assets) {
-      const s3Key = `${config.githubRepo}/${release.tag_name}/${asset.name}`;
+    await Promise.all(
+      release.assets.map(async (asset) => {
+        const s3Key = `${config.githubRepo}/${release.tag_name}/${asset.name}`;
 
-      console.log(`Downloading ${asset.name} (${asset.size} bytes)...`);
-      const buffer = await downloadAsset(asset.browser_download_url);
+        console.log(`Downloading ${asset.name} (${asset.size} bytes)...`);
+        const buffer = await downloadAsset(asset.browser_download_url);
 
-      console.log(`Uploading to S3: ${s3Key}...`);
-      await uploadToS3(buffer, s3Key);
+        console.log(`Uploading to S3: ${s3Key}...`);
+        await uploadToS3(buffer, s3Key);
 
-      console.log(` Synced ${asset.name}`);
-    }
-
-    const metaKey = `${config.githubRepo}/latest.json`;
-    console.log(`Uploading release metadata to S3: ${metaKey}...`);
-    const metaBuffer = new TextEncoder().encode(
-      JSON.stringify(release, null, 2)
+        console.log(` Synced ${asset.name}`);
+      })
     );
-    await uploadToS3(metaBuffer.buffer, metaKey, "application/json");
-    console.log(` Synced latest.json`);
 
     console.log(
       `Successfully synced ${release.assets.length} assets from ${release.tag_name}`
     );
+
+    async function syncReleaseJSON(type: "latest" | "all") {
+      const key = `${config.githubRepo}/${type}.json`;
+      console.log(`Uploading release metadata to S3: ${key}...`);
+      const buffer = new TextEncoder().encode(
+        JSON.stringify(type === "latest" ? release : releases)
+      );
+      await uploadToS3(buffer.buffer, key, "application/json");
+      console.log(`Synced ${key}`);
+    }
+
+    await Promise.all([syncReleaseJSON("all"), syncReleaseJSON("latest")]);
   } catch (error) {
     console.error("Sync failed:", error);
     process.exit(1);
